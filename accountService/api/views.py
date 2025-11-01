@@ -3,6 +3,15 @@ from rest_framework.decorators import api_view
 from .serializers import AccountSerializer
 from base.models import Account 
 
+@api_view(['GET'])
+def getAccount(request, email):
+    try:
+        account = Account.objects.get(email=email)
+    except Account.DoesNotExist:
+        return Response({'error': 'Account not found'}, status=404)
+
+    serializer = AccountSerializer(account)
+    return Response(serializer.data)
 
 @api_view(['GET'])
 def getAllAccounts(request):
