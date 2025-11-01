@@ -1,0 +1,62 @@
+[
+    {
+        "model": "base.account",
+        "pk": "admin@umass.edu",
+        "fields": {
+            "password": "password",
+            "fullname": "Administrator",
+            "role": "admin",
+            "is_active": true,
+            "created_at": "2025-11-01T02:02:17.779Z",
+            "updated_at": "2025-11-01T02:02:17.780Z"
+        }
+    },
+    {
+        "model": "base.account",
+        "pk": "ping@umass.edu",
+        "fields": {
+            "password": "password",
+            "fullname": "Ping Danddank",
+            "role": "student",
+            "is_active": true,
+            "created_at": "2025-11-01T02:02:17.779Z",
+            "updated_at": "2025-11-01T02:02:17.780Z"
+        }
+    },
+    {
+        "model": "base.account",
+        "pk": "doris@umass.edu",
+        "fields": {
+            "password": "password",
+            "fullname": "Doris Liao",
+            "role": "student",
+            "is_active": true,
+            "created_at": "2025-11-01T02:02:17.779Z",
+            "updated_at": "2025-11-01T02:02:17.780Z"
+        }
+    },
+    {
+        "model": "base.account",
+        "pk": "isaac@umass.edu",
+        "fields": {
+            "password": "password",
+            "fullname": "Isaac Newton",
+            "role": "student",
+            "is_active": true,
+            "created_at": "2025-11-01T02:02:17.779Z",
+            "updated_at": "2025-11-01T02:02:17.780Z"
+        }
+    },
+    {
+        "model": "base.account",
+        "pk": "george@umass.edu",
+        "fields": {
+            "password": "password",
+            "fullname": "george washington",
+            "role": "student",
+            "is_active": true,
+            "created_at": "2025-11-01T02:02:17.779Z",
+            "updated_at": "2025-11-01T02:02:17.780Z"
+        }
+    }
+]
