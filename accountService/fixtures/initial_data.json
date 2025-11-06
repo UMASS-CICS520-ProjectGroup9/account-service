@@ -1,8 +1,9 @@
 [
     {
         "model": "base.account",
-        "pk": "admin@umass.edu",
+        "pk": 1,
         "fields": {
+            "email": "admin@umass.edu",
             "password": "password",
             "fullname": "Administrator",
             "role": "admin",
@@ -13,8 +14,9 @@
     },
     {
         "model": "base.account",
-        "pk": "ping@umass.edu",
+        "pk": 2,
         "fields": {
+            "email": "ping@umass.edu",
             "password": "password",
             "fullname": "Ping Danddank",
             "role": "student",
@@ -25,8 +27,9 @@
     },
     {
         "model": "base.account",
-        "pk": "doris@umass.edu",
+        "pk": 3,
         "fields": {
+            "email": "doris@umass.edu",
             "password": "password",
             "fullname": "Doris Liao",
             "role": "student",
@@ -37,8 +40,9 @@
     },
     {
         "model": "base.account",
-        "pk": "isaac@umass.edu",
+        "pk": 4,
         "fields": {
+            "email": "isaac@umass.edu",
             "password": "password",
             "fullname": "Isaac Newton",
             "role": "student",
@@ -49,8 +53,9 @@
     },
     {
         "model": "base.account",
-        "pk": "george@umass.edu",
+        "pk": 5,
         "fields": {
+            "email": "george@umass.edu",
             "password": "password",
             "fullname": "george washington",
             "role": "student",
