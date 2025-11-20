@@ -3,6 +3,7 @@
         "model": "base.account",
         "pk": 1,
         "fields": {
+            "creator_id": 1,
             "email": "admin@umass.edu",
             "password": "password",
             "fullname": "Administrator",
@@ -16,6 +17,7 @@
         "model": "base.account",
         "pk": 2,
         "fields": {
+            "creator_id": 2,
             "email": "ping@umass.edu",
             "password": "password",
             "fullname": "Ping Danddank",
@@ -29,6 +31,7 @@
         "model": "base.account",
         "pk": 3,
         "fields": {
+            "creator_id": 1,
             "email": "doris@umass.edu",
             "password": "password",
             "fullname": "Doris Liao",
@@ -42,6 +45,7 @@
         "model": "base.account",
         "pk": 4,
         "fields": {
+            "creator_id": 3,
             "email": "isaac@umass.edu",
             "password": "password",
             "fullname": "Isaac Newton",
@@ -55,6 +59,7 @@
         "model": "base.account",
         "pk": 5,
         "fields": {
+            "creator_id": 3,
             "email": "george@umass.edu",
             "password": "password",
             "fullname": "george washington",

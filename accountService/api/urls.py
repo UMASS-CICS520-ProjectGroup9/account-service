@@ -13,9 +13,9 @@ urlpatterns = [
     path('account/count_by_role/<str:role>/', views.countAccountsByRole),
     path('account/created_after/<str:date_str>/', views.getAccountsCreatedAfter),
     path('account/role/<str:role>/', views.getAccountsByRole),
-    path('authenticate/', views.authenticateAccount),
-    path('change_password/', views.changeAccountPassword),
+    # path('authenticate/', views.authenticateAccount),
+    # path('change_password/', views.changeAccountPassword),
     path('account/updated_before/<str:date_str>/', views.getAccountsUpdatedBefore),
-    path('account/change_role/', views.changeAccountRole),
-    path('account/toggle_active/', views.toggleAccountActiveStatus),
+    # path('account/change_role/', views.changeAccountRole),
+    # path('account/toggle_active/', views.toggleAccountActiveStatus),
 ]
