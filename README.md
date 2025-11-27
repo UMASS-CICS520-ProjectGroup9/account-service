@@ -47,6 +47,7 @@ Out of the box it runs on port `9001` (via `manage.py runserver 9001`) with SQLi
 - Django test runner (includes tests in `accountService/base/tests.py`): `cd accountService && python manage.py test`
 - Pytest suite (includes app-level `tests/test_account_api.py`): `cd accountService && pytest` or target a file: `pytest tests/test_account_api.py`
 - To keep environments clean, activate your venv first: `source .venv/bin/activate`
+- All test cases result show on alltests_report.html
 
 ## Project Structure
 
