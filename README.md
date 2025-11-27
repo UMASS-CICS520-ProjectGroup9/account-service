@@ -22,6 +22,11 @@ Out of the box it runs on port `9001` (via `manage.py runserver 9001`) with SQLi
 - Data: SQLite by default (`db.sqlite3`), easy to swap via Django `DATABASES` settings
 - Domain: Account records with email uniqueness, role, active flag, timestamps, and creator id from the token
 
+## Documentation
+
+- Sphinx docs live under `docs/`. Build with `cd docs && make html` and open `docs/build/html/index.html`.
+- Key pages: overview, API endpoints, and testing instructions.
+
 ## How to Compile and Run
 
 1) Install dependencies: `pip install -r requirements.txt`
