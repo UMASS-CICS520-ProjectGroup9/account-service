@@ -1,0 +1,407 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>api.views &mdash; account-service 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            account-service
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">account-service</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">api.views</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for api.views</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework.response</span><span class="w"> </span><span class="kn">import</span> <span class="n">Response</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">api_view</span><span class="p">,</span> <span class="n">permission_classes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework</span><span class="w"> </span><span class="kn">import</span> <span class="n">permissions</span><span class="p">,</span> <span class="n">status</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.serializers</span><span class="w"> </span><span class="kn">import</span> <span class="n">AccountSerializer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.permissions</span><span class="w"> </span><span class="kn">import</span> <span class="n">IsAdmin</span><span class="p">,</span> <span class="n">IsStudent</span><span class="p">,</span> <span class="n">IsStaff</span><span class="p">,</span> <span class="n">IsOwnerOrAdmin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rest_framework.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">PermissionDenied</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">base.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Account</span> 
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils.dateparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_datetime</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;request.user&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="getAccount">
+<a class="viewcode-back" href="../../index.html#api.views.getAccount">[docs]</a>
+<span class="nd">@api_view</span><span class="p">([</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@permission_classes</span><span class="p">([</span><span class="n">IsStudent</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">getAccount</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">email</span><span class="p">):</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">account</span> <span class="o">=</span> <span class="n">Account</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">Account</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Account not found&#39;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">404</span><span class="p">)</span>
+
+    <span class="n">serializer</span> <span class="o">=</span> <span class="n">AccountSerializer</span><span class="p">(</span><span class="n">account</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="getAllAccounts">
+<a class="viewcode-back" href="../../index.html#api.views.getAllAccounts">[docs]</a>
+<span class="nd">@api_view</span><span class="p">([</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@permission_classes</span><span class="p">([</span><span class="n">IsAdmin</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">getAllAccounts</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">accounts</span> <span class="o">=</span> <span class="n">Account</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">serializer</span> <span class="o">=</span> <span class="n">AccountSerializer</span><span class="p">(</span><span class="n">accounts</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">account</span> <span class="o">=</span> <span class="n">serializer</span><span class="o">.</span><span class="n">data</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">account</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="createAccount">
+<a class="viewcode-back" href="../../index.html#api.views.createAccount">[docs]</a>
+<span class="nd">@api_view</span><span class="p">([</span><span class="s1">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@permission_classes</span><span class="p">([</span><span class="n">IsStudent</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">createAccount</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;34request.data&quot;</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;35request.user&quot;</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+    
+    <span class="n">serializer</span> <span class="o">=</span> <span class="n">AccountSerializer</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">serializer</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+        <span class="n">serializer</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
+            <span class="n">creator_id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">role</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="s2">&quot;role&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="n">email</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="s2">&quot;email&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="p">)</span>  <span class="c1"># fields derived from JWT</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_201_CREATED</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">errors</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="updateAccount">
+<a class="viewcode-back" href="../../index.html#api.views.updateAccount">[docs]</a>
+<span class="nd">@api_view</span><span class="p">([</span><span class="s1">&#39;PUT&#39;</span><span class="p">])</span>
+<span class="nd">@permission_classes</span><span class="p">([</span><span class="n">IsStudent</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">updateAccount</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">account</span> <span class="o">=</span> <span class="n">Account</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">)</span>
+        <span class="n">perm</span> <span class="o">=</span> <span class="n">IsOwnerOrAdmin</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">perm</span><span class="o">.</span><span class="n">has_object_permission</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">view</span><span class="o">=</span><span class="n">updateAccount</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="n">account</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">PermissionDenied</span><span class="p">(</span><span class="s2">&quot;You are not allowed to access this event.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">PermissionDenied</span> <span class="p">:</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s2">&quot;delete&quot;</span><span class="p">:</span> <span class="s2">&quot;Not allow&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">Account</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Account not found&#39;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">404</span><span class="p">)</span>
+
+    <span class="n">serializer</span> <span class="o">=</span> <span class="n">AccountSerializer</span><span class="p">(</span><span class="n">account</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">partial</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">serializer</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+        <span class="n">serializer</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">errors</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="deleteAccount">
+<a class="viewcode-back" href="../../index.html#api.views.deleteAccount">[docs]</a>
+<span class="nd">@api_view</span><span class="p">([</span><span class="s1">&#39;DELETE&#39;</span><span class="p">])</span>
+<span class="nd">@permission_classes</span><span class="p">([</span><span class="n">IsStudent</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">deleteAccount</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">account</span> <span class="o">=</span> <span class="n">Account</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">)</span>
+        <span class="n">perm</span> <span class="o">=</span> <span class="n">IsOwnerOrAdmin</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">perm</span><span class="o">.</span><span class="n">has_object_permission</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">view</span><span class="o">=</span><span class="n">updateAccount</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="n">account</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">PermissionDenied</span><span class="p">(</span><span class="s2">&quot;You are not allowed to access this event.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">PermissionDenied</span> <span class="p">:</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s2">&quot;delete&quot;</span><span class="p">:</span> <span class="s2">&quot;Not allow&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">Account</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Account not found&#39;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">404</span><span class="p">)</span>
+
+    <span class="n">account</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Account deleted successfully&#39;</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="deleteAllAccounts">
+<a class="viewcode-back" href="../../index.html#api.views.deleteAllAccounts">[docs]</a>
+<span class="nd">@api_view</span><span class="p">([</span><span class="s1">&#39;DELETE&#39;</span><span class="p">])</span>
+<span class="nd">@permission_classes</span><span class="p">([</span><span class="n">IsAdmin</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">deleteAllAccounts</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">count</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">Account</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s1"> Accounts were deleted successfully!&#39;</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="countAccounts">
+<a class="viewcode-back" href="../../index.html#api.views.countAccounts">[docs]</a>
+<span class="nd">@api_view</span><span class="p">([</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@permission_classes</span><span class="p">([</span><span class="n">IsAdmin</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">countAccounts</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">Account</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="n">count</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="healthCheck">
+<a class="viewcode-back" href="../../index.html#api.views.healthCheck">[docs]</a>
+<span class="nd">@api_view</span><span class="p">([</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">healthCheck</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;Account Service is healthy&#39;</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="welcome">
+<a class="viewcode-back" href="../../index.html#api.views.welcome">[docs]</a>
+<span class="nd">@api_view</span><span class="p">([</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">welcome</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Welcome to the Account Service API&#39;</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="apiOverview">
+<a class="viewcode-back" href="../../index.html#api.views.apiOverview">[docs]</a>
+<span class="nd">@api_view</span><span class="p">([</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">apiOverview</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">api_urls</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;Get All Accounts&#39;</span><span class="p">:</span> <span class="s1">&#39;/api/accounts/&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Get Account by Email&#39;</span><span class="p">:</span> <span class="s1">&#39;/api/account/&lt;str:email&gt;/&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Create Account&#39;</span><span class="p">:</span> <span class="s1">&#39;/api/account/create/&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Update Account&#39;</span><span class="p">:</span> <span class="s1">&#39;/api/account/update/&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Delete Account&#39;</span><span class="p">:</span> <span class="s1">&#39;/api/account/delete/&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Delete All Accounts&#39;</span><span class="p">:</span> <span class="s1">&#39;/api/accounts/delete_all/&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Count Accounts&#39;</span><span class="p">:</span> <span class="s1">&#39;/api/accounts/count/&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Health Check&#39;</span><span class="p">:</span> <span class="s1">&#39;/api/health/&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Welcome&#39;</span><span class="p">:</span> <span class="s1">&#39;/api/welcome/&#39;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">api_urls</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="getActiveAccounts">
+<a class="viewcode-back" href="../../index.html#api.views.getActiveAccounts">[docs]</a>
+<span class="nd">@api_view</span><span class="p">([</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@permission_classes</span><span class="p">([</span><span class="n">IsAdmin</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">getActiveAccounts</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">active_accounts</span> <span class="o">=</span> <span class="n">Account</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">is_active</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">serializer</span> <span class="o">=</span> <span class="n">AccountSerializer</span><span class="p">(</span><span class="n">active_accounts</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="getInactiveAccounts">
+<a class="viewcode-back" href="../../index.html#api.views.getInactiveAccounts">[docs]</a>
+<span class="nd">@api_view</span><span class="p">([</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@permission_classes</span><span class="p">([</span><span class="n">IsAdmin</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">getInactiveAccounts</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">inactive_accounts</span> <span class="o">=</span> <span class="n">Account</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">is_active</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">serializer</span> <span class="o">=</span> <span class="n">AccountSerializer</span><span class="p">(</span><span class="n">inactive_accounts</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="activateAccount">
+<a class="viewcode-back" href="../../index.html#api.views.activateAccount">[docs]</a>
+<span class="nd">@api_view</span><span class="p">([</span><span class="s1">&#39;PUT&#39;</span><span class="p">])</span>
+<span class="nd">@permission_classes</span><span class="p">([</span><span class="n">IsAdmin</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">activateAccount</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">account</span> <span class="o">=</span> <span class="n">Account</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">Account</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Account not found&#39;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">404</span><span class="p">)</span>
+
+    <span class="n">account</span><span class="o">.</span><span class="n">is_active</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">account</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">serializer</span> <span class="o">=</span> <span class="n">AccountSerializer</span><span class="p">(</span><span class="n">account</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="deactivateAccount">
+<a class="viewcode-back" href="../../index.html#api.views.deactivateAccount">[docs]</a>
+<span class="nd">@api_view</span><span class="p">([</span><span class="s1">&#39;PUT&#39;</span><span class="p">])</span>
+<span class="nd">@permission_classes</span><span class="p">([</span><span class="n">IsAdmin</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">deactivateAccount</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">account</span> <span class="o">=</span> <span class="n">Account</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">Account</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Account not found&#39;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">404</span><span class="p">)</span>
+
+    <span class="n">account</span><span class="o">.</span><span class="n">is_active</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">account</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">serializer</span> <span class="o">=</span> <span class="n">AccountSerializer</span><span class="p">(</span><span class="n">account</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="getAccountsByRole">
+<a class="viewcode-back" href="../../index.html#api.views.getAccountsByRole">[docs]</a>
+<span class="nd">@api_view</span><span class="p">([</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@permission_classes</span><span class="p">([</span><span class="n">IsAdmin</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">getAccountsByRole</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">role</span><span class="p">):</span>
+    <span class="n">accounts</span> <span class="o">=</span> <span class="n">Account</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">role</span><span class="o">=</span><span class="n">role</span><span class="p">)</span>
+    <span class="n">serializer</span> <span class="o">=</span> <span class="n">AccountSerializer</span><span class="p">(</span><span class="n">accounts</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="countAccountsByRole">
+<a class="viewcode-back" href="../../index.html#api.views.countAccountsByRole">[docs]</a>
+<span class="nd">@api_view</span><span class="p">([</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@permission_classes</span><span class="p">([</span><span class="n">IsAdmin</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">countAccountsByRole</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">role</span><span class="p">):</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">Account</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">role</span><span class="o">=</span><span class="n">role</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s1">&#39;role&#39;</span><span class="p">:</span> <span class="n">role</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">:</span> <span class="n">count</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="getAccountsCreatedAfter">
+<a class="viewcode-back" href="../../index.html#api.views.getAccountsCreatedAfter">[docs]</a>
+<span class="nd">@api_view</span><span class="p">([</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@permission_classes</span><span class="p">([</span><span class="n">IsAdmin</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">getAccountsCreatedAfter</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">date_str</span><span class="p">):</span>
+    <span class="n">date</span> <span class="o">=</span> <span class="n">parse_datetime</span><span class="p">(</span><span class="n">date_str</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">date</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Invalid date format. Use ISO 8601 format.&#39;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+
+    <span class="n">accounts</span> <span class="o">=</span> <span class="n">Account</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">created_at__gt</span><span class="o">=</span><span class="n">date</span><span class="p">)</span>
+    <span class="n">serializer</span> <span class="o">=</span> <span class="n">AccountSerializer</span><span class="p">(</span><span class="n">accounts</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="getAccountsUpdatedBefore">
+<a class="viewcode-back" href="../../index.html#api.views.getAccountsUpdatedBefore">[docs]</a>
+<span class="nd">@api_view</span><span class="p">([</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@permission_classes</span><span class="p">([</span><span class="n">IsAdmin</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">getAccountsUpdatedBefore</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">date_str</span><span class="p">):</span>
+    
+    <span class="n">date</span> <span class="o">=</span> <span class="n">parse_datetime</span><span class="p">(</span><span class="n">date_str</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">date</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Invalid date format. Use ISO 8601 format.&#39;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+
+    <span class="n">accounts</span> <span class="o">=</span> <span class="n">Account</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">updated_at__lt</span><span class="o">=</span><span class="n">date</span><span class="p">)</span>
+    <span class="n">serializer</span> <span class="o">=</span> <span class="n">AccountSerializer</span><span class="p">(</span><span class="n">accounts</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<span class="c1"># @api_view([&#39;GET&#39;])</span>
+<span class="c1"># @permission_classes([IsAdmin])</span>
+<span class="c1"># def authenticateAccount(request):</span>
+<span class="c1">#     email = request.query_params.get(&#39;email&#39;)</span>
+<span class="c1">#     password = request.query_params.get(&#39;password&#39;)</span>
+<span class="c1">#     try:</span>
+<span class="c1">#         account = Account.objects.get(email=email, password=password)</span>
+<span class="c1">#         serializer = AccountSerializer(account)</span>
+<span class="c1">#         return Response(serializer.data)</span>
+<span class="c1">#     except Account.DoesNotExist:</span>
+<span class="c1">#         return Response({&#39;error&#39;: &#39;Invalid email or password&#39;}, status=401)</span>
+    
+<span class="c1"># @api_view([&#39;PUT&#39;])</span>
+<span class="c1"># @permission_classes([IsAdmin])</span>
+<span class="c1"># def changeAccountPassword(request):</span>
+<span class="c1">#     email = request.data.get(&#39;email&#39;)</span>
+<span class="c1">#     old_password = request.data.get(&#39;old_password&#39;)</span>
+<span class="c1">#     new_password = request.data.get(&#39;new_password&#39;)</span>
+<span class="c1">#     try:</span>
+<span class="c1">#         account = Account.objects.get(email=email, password=old_password)</span>
+<span class="c1">#     except Account.DoesNotExist:</span>
+<span class="c1">#         return Response({&#39;error&#39;: &#39;Invalid email or password&#39;}, status=401)</span>
+
+<span class="c1">#     account.password = new_password</span>
+<span class="c1">#     account.save()</span>
+<span class="c1">#     serializer = AccountSerializer(account)</span>
+<span class="c1">#     return Response(serializer.data)</span>
+
+<span class="c1"># @api_view([&#39;PUT&#39;])</span>
+<span class="c1"># @permission_classes([IsAdmin])</span>
+<span class="c1"># def changeAccountRole(request):</span>
+<span class="c1">#     email = request.data.get(&#39;email&#39;)</span>
+<span class="c1">#     new_role = request.data.get(&#39;new_role&#39;)</span>
+<span class="c1">#     try:</span>
+<span class="c1">#         account = Account.objects.get(email=email)</span>
+<span class="c1">#     except Account.DoesNotExist:</span>
+<span class="c1">#         return Response({&#39;error&#39;: &#39;Account not found&#39;}, status=404)</span>
+
+<span class="c1">#     account.role = new_role</span>
+<span class="c1">#     account.save()</span>
+<span class="c1">#     serializer = AccountSerializer(account)</span>
+<span class="c1">#     return Response(serializer.data)</span>
+
+<span class="c1"># @api_view([&#39;PUT&#39;]) </span>
+<span class="c1"># @permission_classes([IsAdmin])</span>
+<span class="c1"># def toggleAccountActiveStatus(request):</span>
+<span class="c1">#     email = request.data.get(&#39;email&#39;)</span>
+<span class="c1">#     try:</span>
+<span class="c1">#         account = Account.objects.get(email=email)</span>
+<span class="c1">#     except Account.DoesNotExist:</span>
+<span class="c1">#         return Response({&#39;error&#39;: &#39;Account not found&#39;}, status=404)</span>
+
+<span class="c1">#     account.is_active = not account.is_active</span>
+<span class="c1">#     account.save()</span>
+<span class="c1">#     serializer = AccountSerializer(account)</span>
+<span class="c1">#     return Response(serializer.data)</span>
+
+
+      
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Nalongsone Danddank.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
