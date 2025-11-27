@@ -1,5 +1,7 @@
 # account-service
 
+This service manages user accounts for the UMASS project. It is a Django project.
+
 Account Service is a lightweight Django REST API that manages user account records for the wider platform. It exposes CRUD endpoints under `/api/account/` and is designed to sit behind an authentication service that issues JWTs. Incoming requests are authenticated locally (no network hop) using the shared signing key, and role-based permissions (`ADMIN`, `STAFF`, `STUDENT`) gate each operation.
 
 Key capabilities:
