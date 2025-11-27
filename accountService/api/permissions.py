@@ -2,15 +2,17 @@ from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 class IsAdmin(BasePermission):
     def has_permission(self, request, view):
-        return request.user.role == "ADMIN"
+        return getattr(request.user, "role", "").upper() == "ADMIN"
 
 class IsStudent(BasePermission):
     def has_permission(self, request, view):
-        return (request.user.role == "STUDENT") or (request.user.role == "ADMIN") or (request.user.role == "STAFF")
+        role = getattr(request.user, "role", "").upper()
+        return role in {"STUDENT", "ADMIN", "STAFF"}
 
 class IsStaff(BasePermission):
     def has_permission(self, request, view):
-        return (request.user.role == "STAFF") or (request.user.role == "ADMIN") 
+        role = getattr(request.user, "role", "").upper()
+        return role in {"STAFF", "ADMIN"}
 
 class IsOwnerOrAdmin(BasePermission):
     """

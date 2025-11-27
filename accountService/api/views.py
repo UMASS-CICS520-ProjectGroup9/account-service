@@ -36,9 +36,11 @@ def createAccount(request):
     
     serializer = AccountSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save(creator_id=request.user.id)  # extracted from JWT
-        serializer.save(role=request.user.role)
-        serializer.save(email=request.user.email)
+        serializer.save(
+            creator_id=request.user.id,
+            role=getattr(request.user, "role", None),
+            email=getattr(request.user, "email", None),
+        )  # fields derived from JWT
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -251,4 +253,3 @@ def getAccountsUpdatedBefore(request, date_str):
 
 
       
-

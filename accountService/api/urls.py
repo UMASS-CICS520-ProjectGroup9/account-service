@@ -8,6 +8,8 @@ urlpatterns = [
     path('account/create/', views.createAccount),
     path('account/update/', views.updateAccount),
     path('account/delete/', views.deleteAccount),
+    path('account/activate/', views.activateAccount),
+    path('account/deactivate/', views.deactivateAccount),
     # path('account/delete_all/', views.deleteAllAccounts),
     path('account/count/', views.countAccounts),
     path('account/count_by_role/<str:role>/', views.countAccountsByRole),
@@ -18,4 +20,9 @@ urlpatterns = [
     path('account/updated_before/<str:date_str>/', views.getAccountsUpdatedBefore),
     # path('account/change_role/', views.changeAccountRole),
     # path('account/toggle_active/', views.toggleAccountActiveStatus),
+    path('account/active/', views.getActiveAccounts),
+    path('account/inactive/', views.getInactiveAccounts),
+    path('health/', views.healthCheck),
+    path('welcome/', views.welcome),
+    path('', views.apiOverview),
 ]
